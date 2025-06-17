@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    loadTasks();
+    
     document.getElementById('myUL').addEventListener('click', function(ev) {
         if (ev.target.tagName === 'LI') {
             ev.target.classList.toggle('checked');
+            updateLocalStorage();
         }
     });
 
@@ -29,9 +32,30 @@ function newElement() {
     span.innerHTML = '&times;';
     span.onclick = function() {
         this.parentElement.remove();
+        updateLocalStorage();
     };
 
     li.appendChild(span);
     document.getElementById('myUL').appendChild(li);
     document.getElementById('myInput').value = '';
+    updateLocalStorage();
+}
+
+function loadTasks() {
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+        document.getElementById('myUL').innerHTML = savedTasks;
+        
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.onclick = function() {
+                this.parentElement.remove();
+                updateLocalStorage();
+            };
+        });
+    }
+}
+
+function updateLocalStorage() {
+    const tasks = document.getElementById('myUL').innerHTML;
+    localStorage.setItem('tasks', tasks);
 }
